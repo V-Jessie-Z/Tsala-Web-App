@@ -24,9 +24,11 @@ ENTRYPOINT ["dotnet", "BackendApp.dll"]
 
 FROM node:18 as build
 WORKDIR /app
-COPY . .
+COPY ./package.json ./   # Explicitly copy the package.json file first
+COPY . .                  # Copy the rest of the project files
 RUN npm install
 RUN npm run build
+
 
 # Serve with NGINX
 FROM nginx:alpine
