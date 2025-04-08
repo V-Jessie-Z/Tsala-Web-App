@@ -21,13 +21,16 @@ COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BackendApp.dll"]
 
 # For React Frontend
-FROM node:16 AS frontend-build
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
+
+FROM node:18 as build
+WORKDIR /app
+COPY . .
 RUN npm install
-COPY frontend/ ./
 RUN npm run build
 
-# Serve React app with Nginx
+# Serve with NGINX
 FROM nginx:alpine
-COPY --from=frontend-build /app/frontend/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
